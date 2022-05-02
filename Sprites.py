@@ -1,8 +1,10 @@
 #imports necessary libraries
 import pygame
 
-#importing Local Variables such as keystokes instead of calling from pygame each time
+#import random for random numbers
+import random
 
+#importing Local Variables such as keystokes instead of calling from pygame each time
 from pygame.locals import(
 	K_UP,
 	K_DOWN,
@@ -46,8 +48,31 @@ class Player(pygame.sprite.Sprite):
 		if self.rect.bottom > SCREEN_HEIGHT:
 			self.rect.bottom = SCREEN_HEIGHT
 		
-		
+#Creating a new Sprite for Enemies
+class Enemies(pygame.sprite.Sprite):
+	#Setting up Sprite Surface and Rect
+	def __init__(self):
+		super(Enemies,self).__init__()
+		self.surf = pygame.Surface((20,10))
+		self.surf.fill((255,255,255))
+		self.rect = self.surf.get_rect()		
 
+	#Setting up a tuple for position of enemies in Screen
+	center = (
+		#Random number between width + 20 and Width + 100 is taken
+		random.randint(SCREEN_WIDTH + 20,SCREEN_WIDTH + 100),
+		#Random position at any height of screen
+		random.randint(0,SCREEN_HEIGHT)
+		)
+
+	#Setting up speed of enemy between 5 to 20
+	self.speed = random.randint(5,20)
+
+	#moving sprite acc to speed
+	def update(self):
+		self.rect.move_ip(self.speed,0)
+		if self.rect.right < 0:
+			self.kill()
 
 #Instantiate player otherwise its just a rect object
 player =  Player()
