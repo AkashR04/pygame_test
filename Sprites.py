@@ -68,9 +68,10 @@ player =  Player()
 # - enemies is used for collision detection and position updates
 # - all_sprites is used for rendering
 enemies = pygame.sprite.Group()
+#Adding  a cloud sprite group
+clouds = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
-
 #Creating a new Sprite for Enemies
 class Enemies(pygame.sprite.Sprite):
 	#Setting up Sprite Surface and Rect
@@ -102,10 +103,37 @@ class Enemies(pygame.sprite.Sprite):
 		if self.rect.right < 0:
 			self.kill()
 
+#Creating a new sprite for clouds
+class Cloud(pygame.sprite.Sprite):
+	def __init__(self):
+		super(Cloud,self).__init__()
+		#Adding an image for cloud
+		self.surf = pygame.image.load('Art/Cloud.bmp').convert_alpha()
+		self.surf.set_colorkey((0,0,0),RLEACCEL)
+		# The starting position is randomly generated
+
+		self.rect = self.surf.get_rect(
+
+			center=(
+					random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+					random.randint(0, SCREEN_HEIGHT),
+					)
+			)
+
+       	#Cloud movement
+		def update(self):
+			self.rect.move_ip(-5, 0)
+			if self.rect.right < 0:
+				self.kill()
+
 
 #Custom event for adding an enemy
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY,250)
+
+#Custom event for adding an cloud every second
+ADDCLOUD = pygame.USEREVENT + 2
+pygame.time.set_timer(ADDENEMY,1000)
 
 #Initialize pygame
 pygame.init()
@@ -122,11 +150,16 @@ while run:
 			#is the key ESC
 			if event.key == K_ESCAPE:
 				run = False
-		#Handling ADDENEMy event
+		#Handling ADDENEMY event
 		elif event.type == ADDENEMY:
 			new_enemy = Enemies()
 			enemies.add(new_enemy)
 			all_sprites.add(new_enemy)
+		#Handling ADDCLOUD event
+		elif event.type == ADDCLOUD:
+			new_cloud = Cloud()
+			clouds.add(new_cloud)
+			all_sprites.add(new_cloud)
 		#is the event type window closure
 		elif event.type == QUIT:
 			run = False 
@@ -139,9 +172,12 @@ while run:
 
 	#Calling defined enemy movement
 	enemies.update()
-
-	#Fill screen with black
-	screen.fill((0,0,0))
+	
+	#Calling defined cloud movement
+	clouds.update()
+	
+	#Fill screen with blue
+	screen.fill((136,206,250))
 	
 	#Draws 'Player' in the middle of screen and updates it
 	#(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
