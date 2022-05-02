@@ -42,8 +42,10 @@ class Player(pygame.sprite.Sprite):
 		#move_ip() moves in place of rect in (x,y) coordinates
 		if pressed_keys[K_UP]:
 			self.rect.move_ip(0, -5)
+			move_up_sound.play()
 		if pressed_keys[K_DOWN]:
 			self.rect.move_ip(0, 5)
+			move_down_sound.play()
 		if pressed_keys[K_LEFT]:
 			self.rect.move_ip(-5, 0)
 		if pressed_keys[K_RIGHT]:
@@ -138,14 +140,29 @@ class Cloud(pygame.sprite.Sprite):
 
 
 
+
 #Initialize pygame
 pygame.init()
+
+# Setup for sounds. Defaults are good.
+pygame.mixer.init()
 
 #Creating a game clock
 clock =  pygame.time.Clock()
 
 #Variable to keep ,ain game loop running
 run = True
+
+#Backgroud music
+pygame.mixer.music.load('Sounds/bg.wav')
+pygame.mixer.music.play(loops = -1)
+
+#Movement sounds
+move_up_sound = pygame.mixer.Sound('Sounds/s1.mp3')
+move_down_sound = pygame.mixer.Sound('Sounds/s2.mp3')
+
+#Collison sound
+collison_sound = pygame.mixer.Sound('Sounds/s3.mp3')
 
 #Main game loop
 while run:
@@ -198,6 +215,10 @@ while run:
 	if pygame.sprite.spritecollideany(player, enemies):
 		#If collided remove player from group and stop game
 		player.kill()
+		move_up_sound.stop()
+		move_down_sound.stop()
+		collison_sound.play()
+		#Stop game
 		run = False
 
 	#Game frome rate
