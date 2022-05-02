@@ -48,6 +48,21 @@ class Player(pygame.sprite.Sprite):
 		if self.rect.bottom > SCREEN_HEIGHT:
 			self.rect.bottom = SCREEN_HEIGHT
 		
+
+#Instantiate player otherwise its just a rect object
+player =  Player()
+
+# Create groups to hold enemy sprites and all sprites
+# - enemies is used for collision detection and position updates
+# - all_sprites is used for rendering
+enemies = pygame.sprite.Group()
+all_sprites = pygame.sprite.Group()
+all_sprites.add(player)
+
+#Defining constants for screen height and width
+SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 800
+
 #Creating a new Sprite for Enemies
 class Enemies(pygame.sprite.Sprite):
 	#Setting up Sprite Surface and Rect
@@ -57,16 +72,16 @@ class Enemies(pygame.sprite.Sprite):
 		self.surf.fill((255,255,255))
 		self.rect = self.surf.get_rect()		
 
-	#Setting up a tuple for position of enemies in Screen
-	center = (
-		#Random number between width + 20 and Width + 100 is taken
-		random.randint(SCREEN_WIDTH + 20,SCREEN_WIDTH + 100),
-		#Random position at any height of screen
-		random.randint(0,SCREEN_HEIGHT)
+		#Setting up a tuple for position of enemies in Screen
+		center = (
+			#Random number between width + 20 and Width + 100 is taken
+			random.randint(SCREEN_WIDTH + 20,SCREEN_WIDTH + 100),
+			#Random position at any height of screen
+			random.randint(0,SCREEN_HEIGHT)
 		)
 
-	#Setting up speed of enemy between 5 to 20
-	self.speed = random.randint(5,20)
+		#Setting up speed of enemy between 5 to 20
+		self.speed = random.randint(5,20)
 
 	#moving sprite acc to speed
 	def update(self):
@@ -74,13 +89,6 @@ class Enemies(pygame.sprite.Sprite):
 		if self.rect.right < 0:
 			self.kill()
 
-#Instantiate player otherwise its just a rect object
-player =  Player()
-
-
-#Defining constants for screen height and width
-SCREEN_HEIGHT = 600
-SCREEN_WIDTH = 800
 
 #Setting object for display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -116,7 +124,11 @@ while run:
 	
 	#Draws 'Player' in the middle of screen and updates it
 	#(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-	screen.blit(player.surf,player.rect)
+	#screen.blit(player.surf,player.rect)
+	# Draw all sprites
+	for entity in all_sprites:
+		screen.blit(entity.surf, entity.rect)
+
 
 	#Update the display
 	pygame.display.flip()
