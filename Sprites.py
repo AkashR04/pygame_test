@@ -142,6 +142,12 @@ while run:
 	for entity in all_sprites:
 		screen.blit(entity.surf, entity.rect)
 
+	#Collision detection for player
+	if pygame.sprite.spritecollideany(player, enemies):
+		#If collided 
+		player.kill()
+		run = False
+
 
 	#Update the display
 	pygame.display.flip()
