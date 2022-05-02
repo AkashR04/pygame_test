@@ -60,6 +60,13 @@ class Player(pygame.sprite.Sprite):
 		if self.rect.bottom > SCREEN_HEIGHT:
 			self.rect.bottom = SCREEN_HEIGHT
 		
+#Custom event for adding an enemy
+ADDENEMY = pygame.USEREVENT + 1
+pygame.time.set_timer(ADDENEMY,250)
+
+#Custom event for adding an cloud every second
+ADDCLOUD = pygame.USEREVENT + 2
+pygame.time.set_timer(ADDCLOUD,1000)
 
 #Instantiate player otherwise its just a rect object
 player =  Player()
@@ -72,6 +79,7 @@ enemies = pygame.sprite.Group()
 clouds = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
+
 #Creating a new Sprite for Enemies
 class Enemies(pygame.sprite.Sprite):
 	#Setting up Sprite Surface and Rect
@@ -86,7 +94,7 @@ class Enemies(pygame.sprite.Sprite):
 			#Setting up a tuple for position of enemies in Screen
 			center = (
 				#Random number between width + 20 and Width + 100 is taken
-				random.randint(SCREEN_WIDTH + 20,SCREEN_WIDTH + 100),
+				random.randint(SCREEN_WIDTH + 10,SCREEN_WIDTH + 100),
 				#Random position at any height of screen
 				random.randint(0,SCREEN_HEIGHT)
 			)
@@ -108,35 +116,33 @@ class Cloud(pygame.sprite.Sprite):
 	def __init__(self):
 		super(Cloud,self).__init__()
 		#Adding an image for cloud
-		self.surf = pygame.image.load('Art/Cloud.bmp').convert_alpha()
+		self.surf = pygame.image.load('Art/nuvem.png').convert_alpha()
+		#253,249
 		self.surf.set_colorkey((0,0,0),RLEACCEL)
 		# The starting position is randomly generated
 
 		self.rect = self.surf.get_rect(
 
 			center=(
-					random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+					random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 50),
 					random.randint(0, SCREEN_HEIGHT),
 					)
 			)
 
-       	#Cloud movement
-		def update(self):
-			self.rect.move_ip(-5, 0)
-			if self.rect.right < 0:
-				self.kill()
+	#Cloud movement
+	def update(self):
+		self.rect.move_ip(-5, 0)
+		if self.rect.right < 0:
+			self.kill()
 
 
-#Custom event for adding an enemy
-ADDENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDENEMY,250)
 
-#Custom event for adding an cloud every second
-ADDCLOUD = pygame.USEREVENT + 2
-pygame.time.set_timer(ADDENEMY,1000)
 
 #Initialize pygame
 pygame.init()
+
+#Creating a game clock
+clock =  pygame.time.Clock()
 
 #Variable to keep ,ain game loop running
 run = True
@@ -150,31 +156,33 @@ while run:
 			#is the key ESC
 			if event.key == K_ESCAPE:
 				run = False
+		
 		#Handling ADDENEMY event
 		elif event.type == ADDENEMY:
 			new_enemy = Enemies()
 			enemies.add(new_enemy)
 			all_sprites.add(new_enemy)
+		
 		#Handling ADDCLOUD event
 		elif event.type == ADDCLOUD:
 			new_cloud = Cloud()
 			clouds.add(new_cloud)
 			all_sprites.add(new_cloud)
+		
 		#is the event type window closure
 		elif event.type == QUIT:
 			run = False 
 	
 	#Pressed Key Dictionary
 	pressed_keys = pygame.key.get_pressed()
-
+	#Calling defined cloud movement
+	clouds.update()
 	#Calling player movement for pressed keys
 	player.update(pressed_keys)
 
 	#Calling defined enemy movement
 	enemies.update()
 	
-	#Calling defined cloud movement
-	clouds.update()
 	
 	#Fill screen with blue
 	screen.fill((136,206,250))
@@ -192,6 +200,8 @@ while run:
 		player.kill()
 		run = False
 
+	#Game frome rate
+	clock.tick(30)
 
 	#Update the display
 	pygame.display.flip()
