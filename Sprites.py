@@ -70,28 +70,34 @@ class Enemies(pygame.sprite.Sprite):
 		super(Enemies,self).__init__()
 		self.surf = pygame.Surface((20,10))
 		self.surf.fill((255,255,255))
-		self.rect = self.surf.get_rect()		
+		self.rect = self.surf.get_rect(
+			#Setting up a tuple for position of enemies in Screen
+			center = (
+				#Random number between width + 20 and Width + 100 is taken
+				random.randint(SCREEN_WIDTH + 20,SCREEN_WIDTH + 100),
+				#Random position at any height of screen
+				random.randint(0,SCREEN_HEIGHT)
+			)
+			)		
 
-		#Setting up a tuple for position of enemies in Screen
-		center = (
-			#Random number between width + 20 and Width + 100 is taken
-			random.randint(SCREEN_WIDTH + 20,SCREEN_WIDTH + 100),
-			#Random position at any height of screen
-			random.randint(0,SCREEN_HEIGHT)
-		)
+		
 
 		#Setting up speed of enemy between 5 to 20
 		self.speed = random.randint(5,20)
 
 	#moving sprite acc to speed
 	def update(self):
-		self.rect.move_ip(self.speed,0)
+		self.rect.move_ip(-self.speed,0)
 		if self.rect.right < 0:
 			self.kill()
 
 
 #Setting object for display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+#Custom event for adding an enemy
+ADDENEMY = pygame.USEREVENT + 1
+pygame.time.set_timer(ADDENEMY,250)
 
 #Initialize pygame
 pygame.init()
@@ -108,6 +114,11 @@ while run:
 			#is the key ESC
 			if event.key == K_ESCAPE:
 				run = False
+		#Handling ADDENEMy event
+		elif event.type == ADDENEMY:
+			new_enemy = Enemies()
+			enemies.add(new_enemy)
+			all_sprites.add(new_enemy)
 		#is the event type window closure
 		elif event.type == QUIT:
 			run = False 
@@ -118,6 +129,8 @@ while run:
 	#Calling player movement for pressed keys
 	player.update(pressed_keys)
 
+	#Calling defined enemy movement
+	enemies.update()
 
 	#Fill screen with black
 	screen.fill((0,0,0))
