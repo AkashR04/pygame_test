@@ -1,8 +1,12 @@
 #imports necessary libraries
+import sys
+sys.path.insert(0, 'D:/Study/pypacka')
+
 import pygame
 import os
 #import random for random numbers
 import random
+
 
 #importing Local Variables such as keystokes instead of calling from pygame each time
 from pygame.locals import(
